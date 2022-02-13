@@ -20,8 +20,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-
-
+# Return example flight data object
 @app.route("/exampleData")
 def example_data():
     flightObjFile = open("demoFlightData.json","r")
@@ -33,6 +32,7 @@ def example_data():
     )
     return response
 
+# Parse and return custom flight data object
 @app.route("/customData", methods=['POST'])
 def custom_data():
 
@@ -59,8 +59,7 @@ def custom_data():
         )
         return response
 
-    print('asdf')
-    return 'extra nope', 400
+    return 'parse failed', 400
 
 
 if __name__ == "__main__":
