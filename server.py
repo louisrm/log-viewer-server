@@ -21,7 +21,7 @@ def allowed_file(filename):
 
 
 # Return example flight data object
-@app.route("/exampleData")
+@app.route("/exampleData", methods=['GET'])
 def example_data():
     flightObjFile = open("demoFlightData.json","r")
     flightObj = json.load(flightObjFile)
