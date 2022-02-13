@@ -1,10 +1,20 @@
-from flask import Flask, jsonify, request
-import json
+import simplejson as json
+import os
+from flask import Flask, request
+from werkzeug.utils import secure_filename
+from parse_tlog import parse_tlog
+
+# create uploads folder if not present
+UPLOAD_FOLDER = os.getcwd() + '/uploads'
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-ALLOWED_EXTENSIONS = {'.tlog'}
-
+# Verify file extension
+ALLOWED_EXTENSIONS = {'tlog'}
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -23,25 +33,36 @@ def example_data():
 
 @app.route("/customData", methods=['POST'])
 def custom_data():
-    print(request.get_data())
+    
+    print(request.files)
 
 
-    # check if the post request has the file part
     if 'file' not in request.files:
-        print('no file')
-        return 'nope', 400
+        print("no file")
+
     file = request.files['file']
+    print(file)
+    print(file.filename)
   
     if file and allowed_file(file.filename):
-        flightObjFile = open("flight_obj.json","r")
-        flightObj = json.load(flightObjFile)
+        print("here")
+
+        filename = secure_filename(file.filename)
+        filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filePath)
+
+        output = parse_tlog(filePath)
+
+        os.remove(filePath)
+
         response = app.response_class(
-            response=json.dumps(flightObj),
+            response=json.dumps(output, ignore_nan = True),
             status=200,
             mimetype='application/json'
         )
         return response
 
+    print('asdf')
     return 'extra nope', 400
 
 
