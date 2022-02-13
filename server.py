@@ -1,5 +1,5 @@
-import simplejson as json
 import os
+import simplejson as json
 from flask import Flask, request
 from werkzeug.utils import secure_filename
 from parse_tlog import parse_tlog
@@ -19,10 +19,12 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Example Data API route
+
+
+
 @app.route("/exampleData")
 def example_data():
-    flightObjFile = open("flight_obj.json","r")
+    flightObjFile = open("demoFlightData.json","r")
     flightObj = json.load(flightObjFile)
     response = app.response_class(
         response=json.dumps(flightObj),
@@ -33,16 +35,11 @@ def example_data():
 
 @app.route("/customData", methods=['POST'])
 def custom_data():
-    
-    print(request.files)
-
 
     if 'file' not in request.files:
-        print("no file")
+        return 'no file', 400
 
     file = request.files['file']
-    print(file)
-    print(file.filename)
   
     if file and allowed_file(file.filename):
         print("here")

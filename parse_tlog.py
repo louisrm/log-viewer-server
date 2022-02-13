@@ -2,12 +2,16 @@ import os
 import simplejson as json
 
 def parse_tlog(filePath):
+    """ execute mavlogdump.py and convert the output to a json object """ 
 
     # convert to json
-    cmd = 'cmd /c "mavlogdump.py --show-seq --source-system 1 --format json "' + filePath + '" > output.json"'
+    if os.name == 'nt':
+        cmd = 'cmd /c "mavlogdump.py --show-seq --source-system 1 --format json "' + filePath + '" > output.json"'
+    else:
+        cmd = '"mavlogdump.py --show-seq --source-system 1 --format json "' + filePath + '" > output.json"'
+        
     print('Executing: ' + cmd)
     os.system(cmd)
-
 
     # read json
     dataList = [json.loads(line) for line in open('output.json', 'r')]
@@ -15,7 +19,6 @@ def parse_tlog(filePath):
     # parse into data dictionary
     data = {}
     data['MsgTime_s'] = []
-    #totalSeqList = []
 
     for dataLine in dataList:
         curType = dataLine['meta']['type']
@@ -43,8 +46,8 @@ def parse_tlog(filePath):
             for dataKey in dataDict:
                 data[curType][dataKey] = [dataDict[dataKey]]
 
-    json_object = json.dumps(data, ignore_nan = True) 
-    os.remove(os.path.join(os.getcwd(), 'output.json'))
+    json_object = json.dumps(data, ignore_nan = True) ## convert NaN's to null if present
 
+    os.remove(os.path.join(os.getcwd(), 'output.json'))
 
     return json_object
