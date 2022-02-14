@@ -5,16 +5,18 @@ def parse_tlog(filePath):
     """ execute mavlogdump.py and convert the output to a json object """ 
 
     # convert to json
+    parseOutput = os.path.join(os.getcwd(), 'output.json')
+
     if os.name == 'nt':
-        cmd = 'cmd /c "mavlogdump.py --show-seq --source-system 1 --format json "' + filePath + '" > output.json"'
+        cmd = 'cmd /c "mavlogdump.py --show-seq --source-system 1 --format json "' + filePath + '" > ' + parseOutput + '"'
     else:
-        cmd = '"mavlogdump.py --show-seq --source-system 1 --format json "' + filePath + '" > output.json"'
+        cmd = 'mavlogdump.py --show-seq --source-system 1 --format json "' + filePath + '" > ' + parseOutput
         
     print('Executing: ' + cmd)
     os.system(cmd)
 
     # read json
-    dataList = [json.loads(line) for line in open('output.json', 'r')]
+    dataList = [json.loads(line) for line in open(parseOutput, 'r')]
 
     # parse into data dictionary
     data = {}
@@ -48,6 +50,6 @@ def parse_tlog(filePath):
 
     json_object = json.dumps(data, ignore_nan = True) ## convert NaN's to null if present
 
-    os.remove(os.path.join(os.getcwd(), 'output.json'))
+    os.remove(parseOutput)
 
     return json_object

@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 from parse_tlog import parse_tlog
 
 # create uploads folder if not present
-UPLOAD_FOLDER = os.getcwd() + '/uploads'
+UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads')
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
@@ -42,8 +42,6 @@ def custom_data():
     file = request.files['file']
   
     if file and allowed_file(file.filename):
-        print("here")
-
         filename = secure_filename(file.filename)
         filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filePath)
