@@ -1,6 +1,6 @@
 # PlotBot Server
 
-This is a small flask server meant to provide flight data to the PlotBot frontend.
+This is a small flask server meant to parse .tlog files and provide flight data to the [PlotBot](https://github.com/louisrm/plot-bot-client) frontend. This process utilizes the [pymavlink](https://github.com/Parrot-Developers/mavlink/tree/master/pymavlink) toolbox to parse .tlog files and generate a JSON reply.
 
 ## Getting started
 
